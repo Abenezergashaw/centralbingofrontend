@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Serial Number & Error Processor</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* height: 100vh; */
+        background-color: #f0f4f8;
+        font-family: "Arial", sans-serif;
+        margin: 0;
+      }
+
+      .container {
+        display: flex;
+        justify-content: space-between;
+        /* align-items: spa; */
+        gap: 10px;
+        background: #ffffff;
+        padding: 20px 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 80%;
+      }
+
+      h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      .output {
+        background-color: #f8f9fa;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .section {
+        margin-bottom: 30px;
+        background-color: azure;
+        border-right: 5px solid #3498db;
+        padding-right: 10px;
+      }
+
+      #package-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .package-button {
+        width: 50px;
+        background-color: #ccc;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .package-button:hover {
+        background-color: #2980b9;
+        color: #fff;
+      }
+
+      .active {
+        background-color: #3498db;
+        font-weight: bolder;
+        font-size: 1.1em;
+        color: #fff;
+      }
+
+      @media screen and (max-width: 500px) {
+        .container {
+          display: block;
+        }
+      }
+    </style>
+    <script
+      defer
+      data-domain="serialencryption.tiiny.site"
+      src="https://analytics.tiiny.site/js/plausible.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://tiiny.host/ad-script.js"
+    ></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Package value checker -->
+      <div class="section">
+        <h2>Package Value</h2>
+        <input type="text" id="numberInput" placeholder="Enter Package Value" />
+        <button onclick="convertToAscii()">Get Package</button>
+        <input
+          type="text"
+          id="result"
+          placeholder="Result"
+          class="output"
+          readonly
+        />
+      </div>
+
+      <!-- Serial Number Section -->
+      <div class="section">
+        <h2>Serial Number Processor</h2>
+        <input
+          type="text"
+          id="serialNumber"
+          placeholder="Enter Serial Number"
+        />
+        <button onclick="processSerial()">Process Serial</button>
+        <input
+          type="text"
+          id="serialOutput"
+          placeholder="Result"
+          class="output"
+          readonly
+        />
+      </div>
+
+      <!-- Package Code Section -->
+      <div class="section">
+        <h2>Package Code Processor</h2>
+        <div id="package-buttons">
+          <div class="package-button" data-p="102">5k</div>
+          <div class="package-button active" data-p="116">10k</div>
+          <div class="package-button" data-p="101">15k</div>
+          <div class="package-button" data-p="121">20k</div>
+          <div class="package-button" data-p="107">25k</div>
+        </div>
+        <input type="text" id="packageCode" placeholder="Enter Package Code" />
+        <button onclick="processPackage()">Process Package</button>
+        <input
+          type="text"
+          id="packageOutput"
+          placeholder="Result"
+          class="output"
+          readonly
+        />
+      </div>
+
+      <!-- Error Code Section -->
+      <div class="section">
+        <h2>Error Code Processor</h2>
+        <input type="text" id="errorCode" placeholder="Enter Error Code" />
+        <button onclick="processError()">Process Error</button>
+        <input
+          type="text"
+          id="errorOutput"
+          placeholder="Result"
+          class="output"
+          readonly
+        />
+      </div>
+    </div>
+
+    <script>
+      document.querySelectorAll(".package-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".package-button").forEach((item) => {
+            item.classList.remove("active");
+          });
+          button.classList.add("active");
+        });
+      });
+
+      function processSerial() {
+        const serialNumber = document.getElementById("serialNumber").value;
+        var newSerial = "";
+        var mul = 1;
+        var sum = 0;
+        for (var i = 0; i < serialNumber.length; i++) {
+          newSerial += serialNumber[i].charCodeAt();
+          mul *= serialNumber[i].charCodeAt();
+          sum += serialNumber[i].charCodeAt();
+        }
+
+        var diff = parseInt(newSerial) - 888888 * sum;
+        var last = diff - mul;
+
+        document.getElementById("serialOutput").value = last;
+      }
+
+      function processError() {
+        const error = document.getElementById("errorCode").value;
+        var newError = error.slice(6, error.length);
+
+        var mul = 1;
+        var sum = 0;
+        for (var i = 0; i < newError.length; i++) {
+          mul *= newError[i];
+          sum += newError[i];
+        }
+
+        var newCode = -1 * (mul - 23 * sum);
+        document.getElementById("errorOutput").value = newCode;
+      }
+
+      function processPackage() {
+        const balance = document.getElementById("packageCode").value;
+        const pValue = document.querySelector(".active").getAttribute("data-p");
+        var modefiedBalance = "";
+
+        for (var i = 0; i < balance.length; i++) {
+          modefiedBalance += (parseInt(balance[i]) + i + 1).toString();
+        }
+
+        var mm = modefiedBalance.slice(0, 5) + pValue;
+        document.getElementById("packageOutput").value = mm;
+      }
+      function convertToAscii() {
+        let number = document.getElementById("numberInput").value;
+
+        // Ensure the input contains only digits
+        if (!/^\d+$/.test(number)) {
+          document.getElementById("result").innerText =
+            "Please enter a valid number.";
+          return;
+        }
+
+        let result = "";
+
+        // Iterate through the string, taking two digits at a time
+        for (let i = 0; i < number.length; i += 2) {
+          // Get the current pair of digits
+          let pair = number.slice(i, i + 2);
+
+          // If there's only one digit left (odd length), handle it as needed
+          if (pair.length === 1) {
+            pair = "0" + pair; // Optionally, you can add a leading '0'
+          }
+
+          // Convert the pair to an integer and find the corresponding ASCII character
+          let asciiValue = parseInt(pair);
+          let character = String.fromCharCode(asciiValue);
+
+          // Append the character to the result
+          result += character;
+        }
+
+        // Display the result in the UI
+        document.getElementById("result").value = result;
+      }
+    </script>
+  </body>
+</html>

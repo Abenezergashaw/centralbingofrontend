@@ -13,7 +13,7 @@ export default defineConfig({
     proxy: {
       "/api": {
         // target: "http://172.20.10.13:5000",
-        target: "http://centralbingo.duckdns.org",
+        target: "https://centralbingo.duckdns.org",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""), // Removes FIRST `/api` only
       },

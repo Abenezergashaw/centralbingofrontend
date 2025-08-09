@@ -14,7 +14,7 @@ const { get_card } = useCard();
 const { check_win } = useBingo();
 
 // const socket = io("http://localhost:5000");
-const socket = io("https://centralbingo.duckdns.org:5000");
+const socket = io("https://centralbingo.duckdns.org");
 
 const gameStates = ref(["game-select", "card-select", "game"]);
 const gameState = ref("game-select");

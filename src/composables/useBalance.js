@@ -1,9 +1,8 @@
 import axios from "axios";
 import { useUrl } from "@/stores/url";
 
-const url = useUrl();
-
 export function useBalance() {
+  const url = useUrl();
   async function get_balance(phone) {
     try {
       const res = await axios.get(

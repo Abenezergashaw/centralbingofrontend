@@ -192,11 +192,11 @@ socket.on("finished_calling", (d) => {
 
 socket.on("drawing_numbers", (d) => {
   selected_game.value = JSON.parse(d);
-  if (gameState.value === "game") {
-    if (!audio.value) {
-      playCachedAudio(`sound${selected_game.value.current_number}`);
-    }
+  // if (gameState.value === "game") {
+  if (!audio.value) {
+    playCachedAudio(`sound${selected_game.value.current_number}`);
   }
+  // }
 });
 
 socket.on("bingo", (winners_data, drawn_numbers, current_number, l, c) => {

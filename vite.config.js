@@ -12,8 +12,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://172.20.10.13:5000",
-        // target: "https://centralbingo.duckdns.org",
+        // target: "http://172.20.10.13:5000",
+        target: "https://centralbingo.duckdns.org",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""), // Removes FIRST `/api` only
       },

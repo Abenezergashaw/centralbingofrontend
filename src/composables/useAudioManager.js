@@ -5,6 +5,7 @@ const DB_VERSION = 1;
 const audioList = Array.from({ length: 75 }, (_, i) => ({
   key: `sound${i + 1}`,
   url: `http://localhost:5000/audio/${i + 1}.m4a`,
+  // url: `https://centralbingo.duckdns.org/audio/${i + 1}.m4a`,
 }));
 
 let db = null;

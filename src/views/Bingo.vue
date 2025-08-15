@@ -134,6 +134,103 @@ socket.on(`selected_card_respose_20`, (d) => {
   }
 });
 
+socket.on(`selected_card_respose_30`, (d) => {
+  selected_game.value = JSON.parse(d);
+  const f = selected_game.value.players.find(
+    (p) => p.user_id === username.value
+  );
+
+  if (f) {
+    const cartela = f.cartela_number;
+    previewCards.value = get_card(cartela);
+  } else {
+    previewCards.value = [];
+  }
+});
+
+socket.on(`selected_card_respose_50`, (d) => {
+  selected_game.value = JSON.parse(d);
+  const f = selected_game.value.players.find(
+    (p) => p.user_id === username.value
+  );
+
+  if (f) {
+    const cartela = f.cartela_number;
+    previewCards.value = get_card(cartela);
+  } else {
+    previewCards.value = [];
+  }
+});
+socket.on(`selected_card_respose_80`, (d) => {
+  selected_game.value = JSON.parse(d);
+  const f = selected_game.value.players.find(
+    (p) => p.user_id === username.value
+  );
+
+  if (f) {
+    const cartela = f.cartela_number;
+    previewCards.value = get_card(cartela);
+  } else {
+    previewCards.value = [];
+  }
+});
+
+socket.on(`selected_card_respose_100`, (d) => {
+  selected_game.value = JSON.parse(d);
+  const f = selected_game.value.players.find(
+    (p) => p.user_id === username.value
+  );
+
+  if (f) {
+    const cartela = f.cartela_number;
+    previewCards.value = get_card(cartela);
+  } else {
+    previewCards.value = [];
+  }
+});
+
+socket.on(`selected_card_respose_150`, (d) => {
+  selected_game.value = JSON.parse(d);
+  const f = selected_game.value.players.find(
+    (p) => p.user_id === username.value
+  );
+
+  if (f) {
+    const cartela = f.cartela_number;
+    previewCards.value = get_card(cartela);
+  } else {
+    previewCards.value = [];
+  }
+});
+
+socket.on(`selected_card_respose_200`, (d) => {
+  selected_game.value = JSON.parse(d);
+  const f = selected_game.value.players.find(
+    (p) => p.user_id === username.value
+  );
+
+  if (f) {
+    const cartela = f.cartela_number;
+    previewCards.value = get_card(cartela);
+  } else {
+    previewCards.value = [];
+  }
+});
+
+socket.on(`selected_card_respose_300`, (d) => {
+  selected_game.value = JSON.parse(d);
+  const f = selected_game.value.players.find(
+    (p) => p.user_id === username.value
+  );
+
+  if (f) {
+    const cartela = f.cartela_number;
+    previewCards.value = get_card(cartela);
+  } else {
+    previewCards.value = [];
+  }
+});
+
 const getNumberColor = (number) => {
   // const match = props.games.players.find((p) => p.cartela_number === number);
   if (
@@ -188,15 +285,25 @@ socket.on("finished_calling", (d) => {
     is_bingo.value = false;
     selected_game.value = {};
     game.value = null;
+    dn.value = [];
+    cn.value = null;
   }
 });
+const dn = ref([]);
+const cn = ref(null);
+const cc = ref(0);
 
 socket.on("drawing_numbers", (d) => {
   selected_game.value = JSON.parse(d);
   if (gameState.value === "game") {
+    console.log("selected game before:", selected_game.value);
+    dn.value.push(selected_game.value.current_number);
+    cn.value = selected_game.value.current_number;
+    cc.value = selected_game.value.counter;
     if (!audio.value) {
       playCachedAudio(`sound${selected_game.value.current_number}`);
     }
+    console.log("selected game after:", selected_game.value);
   }
 });
 
@@ -236,6 +343,9 @@ socket.on("bingo", (winners_data, drawn_numbers, current_number, l, c) => {
 });
 
 function get_letter(n) {
+  if (!n || n == undefined) {
+    return { letter: "", bg: "bg-purple-900" };
+  }
   if (n >= 1 && n < 16) {
     return {
       letter: "B",
@@ -297,6 +407,8 @@ const handle_game_end = () => {
   is_bingo.value = false;
   selected_game.value = {};
   game.value = null;
+  dn.value = [];
+  cn.value = null;
 };
 
 const handle_card_confirm = () => {
@@ -568,7 +680,7 @@ onBeforeUnmount(() => {
         class="h-14 flex flex-col justify-center items-center gap-2 bg-white rounded-lg text-black flex-1 shadow-lg shadow-[#444]"
       >
         <span>Call</span>
-        <span>{{ selected_game.counter }}</span>
+        <span>{{ cc }}</span>
       </div>
       <div
         class="h-14 flex flex-col justify-center items-center gap-2 bg-white rounded-lg text-black flex-1 shadow-lg shadow-[#444]"
@@ -628,9 +740,7 @@ onBeforeUnmount(() => {
             v-for="col in 5"
             :key="`${row}-${col}`"
             :class="`p-2 w-6 h-6 flex items-center justify-center rounded-lg text-sm ${
-              selected_game.drawn_numbers.includes(getNumber(row, col))
-                ? 'bg-red-500'
-                : 'bg-gray-700 '
+              dn.includes(getNumber(row, col)) ? 'bg-red-500' : 'bg-gray-700 '
             }`"
           >
             <div>
@@ -650,7 +760,7 @@ onBeforeUnmount(() => {
             'justify-center',
             'items-center',
             'bg-purple-800',
-            // get_letter(selected_game.current_number).bg,
+            get_letter(cn).bg,
           ]"
         >
           <div
@@ -660,10 +770,9 @@ onBeforeUnmount(() => {
               class="w-32 h-32 bg-white rounded-full flex flex-col justify-center items-center text-[65px] font-semibold"
             >
               <div class="text-[30px]">
-                <!-- {{ get_letter(selected_game.current_number).letter }} -->
-                B
+                {{ get_letter(cn).letter }}
               </div>
-              <div>{{ selected_game.current_number }}</div>
+              <div>{{ cn }}</div>
             </div>
           </div>
         </div>

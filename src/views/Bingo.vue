@@ -1,27 +1,46 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { io } from "socket.io-client";
+import { onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
+import { connect, io } from "socket.io-client";
 import { useBalance } from "../composables/useBalance";
 import useCard from "@/composables/useCard";
 import { useBingo } from "@/composables/useBingo";
 import Card from "@/components/Card.vue";
 import WinModal from "@/components/WinModal.vue";
 import PreviewCard from "@/components/PreviewCard.vue";
+import { useMenuStore } from "@/stores/menu";
+import { useRoute } from "vue-router";
+import { useUserStore } from "@/stores/user";
+import {
+  preloadAllAudios,
+  unlockAudio,
+  playCachedAudio,
+} from "@/composables/useAudioManager";
+import { SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/vue/24/outline";
 
 // Composable functions
-const { get_balance } = useBalance();
+const { get_balance, get_both_balance } = useBalance();
 const { get_card } = useCard();
 const { check_win } = useBingo();
 
+// pinia stores
+const menu = useMenuStore();
+const user = useUserStore();
+
+menu.setSelected("game");
+
+const socket = io("http://172.20.10.13:5000");
 // const socket = io("http://localhost:5000");
-const socket = io("https://centralbingo.duckdns.org");
+// const socket = io("https://centralbingo.duckdns.org");
 
 const gameStates = ref(["game-select", "card-select", "game"]);
 const gameState = ref("game-select");
 
 // General username
-const username = ref("934596919");
+const username = ref(user.user);
 const balance = ref(0);
+
+// Audio
+const audio = ref(false);
 
 // Card
 const playingCards = ref({});
@@ -53,7 +72,6 @@ const getNumber = (row, col) => {
 // Sockets
 // socket.on("games", (d) => {
 //   games.value = JSON.parse(d);
-//   // console.log(JSON.parse(d));
 // });
 
 socket.on("games", (g) => {
@@ -70,19 +88,19 @@ socket.on("games", (g) => {
 });
 
 // socket.on("timer_10", (d) => {
-//   console.log(JSON.parse(d));
 //   games.value = JSON.parse(d);
 // });
 
 const join_game = (g) => {
+  // if (!selected_game.value.active) {
   game.value = g;
-  console.log(typeof game.value);
+  game.value = g;
   gameState.value = "card-select";
   socket.emit(`join_room`, `game_${game.value}`, username.value, game.value);
+  // }
 };
 
 const cartela_selected = (c) => {
-  console.log("card: ", c);
   confirmed.value = false;
   socket.emit("cartela_to_home", username.value, game.value);
   socket.emit("cartela_selected", c, game.value, username.value);
@@ -90,20 +108,28 @@ const cartela_selected = (c) => {
 
 socket.on(`selected_card_respose_10`, (d) => {
   selected_game.value = JSON.parse(d);
-  console.log(selected_game.value);
-  // console.log(games.value);
   const f = selected_game.value.players.find(
     (p) => p.user_id === username.value
   );
 
   if (f) {
-    // console.log(f.cartela_number);
     const cartela = f.cartela_number;
     previewCards.value = get_card(cartela);
-
-    console.log(previewCards.value);
   } else {
-    console.log("");
+    previewCards.value = [];
+  }
+});
+
+socket.on(`selected_card_respose_20`, (d) => {
+  selected_game.value = JSON.parse(d);
+  const f = selected_game.value.players.find(
+    (p) => p.user_id === username.value
+  );
+
+  if (f) {
+    const cartela = f.cartela_number;
+    previewCards.value = get_card(cartela);
+  } else {
     previewCards.value = [];
   }
 });
@@ -137,35 +163,49 @@ socket.on("game-starting", (d) => {
   const userIds = players.map((p) => p.user_id);
   const exists = userIds.includes(username.value);
   if (exists) {
+    gameState.value = "game";
+    get_balance_in();
     const CartelaNumbers =
       selected_game.value?.players?.find((p) => p.user_id === username.value)
         ?.cartela_number || [];
     playingCards.value = get_card(CartelaNumbers);
-    gameState.value = "game";
   }
-  // console.log("Game-starting", p);
 });
 
+const get_balance_in = async () => {
+  const b = await get_both_balance(user.user);
+  user.setUserBalance(b.balance, b.bonus);
+};
+
 socket.on("finished_calling", (d) => {
+  // console.log("finished_calling", d);
   const players = JSON.parse(d).players || [];
   const userIds = players.map((p) => p.user_id);
   const exists = userIds.includes(username.value);
   if (exists) {
     gameState.value = "game-select";
+    is_bingo.value = false;
+    selected_game.value = {};
+    game.value = null;
   }
 });
 
 socket.on("drawing_numbers", (d) => {
   selected_game.value = JSON.parse(d);
+  if (gameState.value === "game") {
+    if (!audio.value) {
+      playCachedAudio(`sound${selected_game.value.current_number}`);
+    }
+  }
 });
 
 socket.on("bingo", (winners_data, drawn_numbers, current_number, l, c) => {
   win_card.value = [];
-
-  console.log("Winner data npc: ", winners_data);
+  console.log("winners_data", winners_data);
   if (winners_data[0].user === "npc") {
-    is_bingo.value = true;
-
+    if (gameState.value === "game") {
+      is_bingo.value = true;
+    }
     win_card.value.push({
       user_id: winners_data[0].user,
       current_number,
@@ -178,7 +218,9 @@ socket.on("bingo", (winners_data, drawn_numbers, current_number, l, c) => {
       const bingo = check_win(winner.cartela, drawn_numbers, current_number);
 
       if (bingo.status) {
-        is_bingo.value = true;
+        if (gameState.value === "game") {
+          is_bingo.value = true;
+        }
 
         win_card.value.push({
           user_id: winner.user,
@@ -190,8 +232,6 @@ socket.on("bingo", (winners_data, drawn_numbers, current_number, l, c) => {
       }
     });
   }
-
-  console.log(win_card.value);
 });
 
 function get_letter(n) {
@@ -230,7 +270,6 @@ function get_letter(n) {
 const handle_bingo = (id) => {
   const card = playingCards.value.find((c) => c.id === id);
   const isBlocked = card ? card.is_blocked === true : false;
-  console.log(isBlocked);
   if (!isBlocked) {
     if (selected_game.value.active) {
       const bingo = check_win(
@@ -244,7 +283,6 @@ const handle_bingo = (id) => {
         for (const card of playingCards.value) {
           if (card.id === id) {
             card.is_blocked = true;
-            console.log(playingCards.value);
             break;
           }
         }
@@ -263,6 +301,7 @@ const handle_game_end = () => {
 const handle_card_confirm = () => {
   socket.emit("entering_game", game.value, username.value);
   confirmed.value = true;
+  // handle_audio();
 };
 
 const handle_go_back = () => {
@@ -270,17 +309,47 @@ const handle_go_back = () => {
   confirmed.value = true;
 };
 
+const handle_audio = async () => {
+  unlockAudio();
+  audio.value = !audio.value;
+};
+
+const audioStatus = () => {
+  audio.value = !audio.value;
+};
+
 socket.on("go_back_10", (d) => {
   selected_game.value = JSON.parse(d);
 });
 
+const selectRandomNumber = () => {
+  const a = Math.floor(Math.random() * 200) + 1;
+  cartela_selected(a);
+};
+
 onMounted(async () => {
+  preloadAllAudios(true);
   balance.value = await get_balance(username.value);
 
   socket.on("connect", () => {
-    // console.log("Connected to server");
     socket.emit("set_username", username.value);
   });
+});
+
+onBeforeUnmount(() => {
+  socket.off("drawing_numbers");
+  socket.off("bingo");
+  if (gameState.value === "game") {
+    socket.emit("left_game", `game_${game.value}`, user.user);
+  } else if (gameState.value === "card-select") {
+    console.log("left_game_before", game.value, user.user);
+    socket.emit(
+      "left_game_before",
+      `game_${game.value}`,
+      user.user,
+      game.value
+    );
+  }
 });
 </script>
 
@@ -306,14 +375,24 @@ onMounted(async () => {
     <div
       v-for="game in games"
       :key="game.value"
-      :class="`w-[100%] h-[6.5vh] bg-gradient-to-b from-[#465472] to-[#7FA5C0] rounded-lg flex justify-between items-center text-white text-md px-1 my-2 max-w-[500px] mx-auto`"
+      :class="`w-[100%] h-[6.5vh] bg-gradient-to-b ${
+        game.value === 10 || game.value === 100
+          ? 'from-[#A0C970] to-[#028101]'
+          : 'from-[#465472] to-[#7FA5C0]'
+      } rounded-lg flex justify-between items-center text-white text-md px-1 my-2 max-w-[500px] mx-auto relative`"
     >
+      <div
+        class="rotated-box bg-yellow-500 px-2 py-1 rounded-3xl absolute top-[-10px] left-[-20px] text-black"
+        v-if="game.value === 10 || game.value === 100"
+      >
+        Bonus
+      </div>
       <div class="flex justify-center items-center w-[15%] h-full">
         {{ game.value }}
       </div>
       <div
         :class="`flex justify-center items-center gap-1 w-[16%] h-full tracking-wider ${
-          game.active ? 'text-red-200' : 'text-white'
+          game.active ? 'text-[#ed0e0e] font-extrabold uppercase' : 'text-white'
         }`"
       >
         <div
@@ -321,7 +400,9 @@ onMounted(async () => {
           class="w-3 h-3 bg-red-500 rounded-full animate-pulse"
         ></div>
 
-        {{ game.active ? "Playing" : game.count + " s" }}
+        {{
+          game.active ? "Playing" : "00:" + String(game.count).padStart(2, "0")
+        }}
       </div>
       <div class="flex justify-center items-center w-[23%] h-full gap-2">
         <svg
@@ -371,60 +452,25 @@ onMounted(async () => {
         }"
         @click="join_game(game.value)"
       >
-        {{ balance >= game.value ? "Join >>" : "💰" }}
-      </div>
-    </div>
-
-    <div
-      :class="`w-[100%] h-[8vh] bg-gradient-to-b from-[#A1C970] to-[#048203] rounded-lg flex justify-between items-center text-white text-md px-1 my-2 max-w-[500px] mx-auto`"
-    >
-      <div class="flex justify-center items-center w-[15%] h-full">10 birr</div>
-      <div class="flex justify-center items-center gap-1 w-[16%] h-full">
-        0:28
-      </div>
-      <div class="flex justify-center items-center w-[23%] h-full gap-2">
-        <svg
-          stroke="currentColor"
-          fill="currentColor"
-          stroke-width="0"
-          viewBox="0 0 512 512"
-          class="fw-bolder"
-          height="1em"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="32"
-            d="M176 249.38 256 170l80 79.38m-80-68.35V342"
-          ></path>
-          <path
-            fill="none"
-            stroke-miterlimit="10"
-            stroke-width="32"
-            d="M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192z"
-          ></path>
-        </svg>
-        <span>90 Birr</span>
-      </div>
-      <div
-        :class="`flex justify-center items-center w-[21%] h-[80%]  rounded-lg font-semibold`"
-        :style="{
-          backgroundColor: 'var(--button-color)',
-          color: 'var(--text-color)',
-        }"
-      >
-        Join >>
+        {{ balance >= game.value ? "Join >>" : "Join >>" }}
       </div>
     </div>
   </div>
 
   <!-- Card select  -->
   <div class="w-full py-2 px-2" v-if="gameState === 'card-select'">
-    <div class="text-center text-3xl tracking-widest text-white mb-2">
+    <div
+      class="text-center text-3xl tracking-widest text-white mb-2"
+      v-if="!selected_game.active"
+    >
       {{ selected_game.count + " s" }}
+    </div>
+
+    <div
+      class="text-center text-3xl tracking-widest text-yellow-500 mb-2"
+      v-else
+    >
+      Game started
     </div>
 
     <div class="flex justify-center items-center gap-4">
@@ -435,6 +481,7 @@ onMounted(async () => {
       </div>
 
       <button
+        @click="selectRandomNumber"
         class="h-full p-2.5 rounded-md"
         style="background-color: var(--button-color)"
       >
@@ -538,9 +585,11 @@ onMounted(async () => {
         }}</span>
       </div>
       <div
+        @click="audioStatus"
         class="h-14 flex flex-col justify-center items-center gap-2 bg-white rounded-lg text-black flex-1 shadow-lg shadow-[#444]"
       >
-        Audio
+        <SpeakerXMarkIcon v-if="audio" class="w-6 h-6 text-red-500" />
+        <SpeakerWaveIcon v-else class="w-6 h-6 text-green-500" />
       </div>
     </div>
 
@@ -592,7 +641,13 @@ onMounted(async () => {
       <div class="w-[58%] flex flex-col justify-start items-center">
         <div
           :class="[
-            'w-52 h-52 bg-red-500 rounded-full flex justify-center items-center',
+            'w-52',
+            'h-52',
+
+            'rounded-full',
+            'flex',
+            'justify-center',
+            'items-center',
             get_letter(selected_game.current_number).bg,
           ]"
         >
@@ -632,5 +687,14 @@ onMounted(async () => {
   content: "";
   display: block;
   padding-bottom: 100%;
+}
+.rotated-box {
+  /* width: 200px;
+  height: 100px; */
+
+  /* Rotate 20 degrees */
+  transform: rotate(-45deg);
+
+  /* Adjust origin if you want to rotate around a different point */
 }
 </style>

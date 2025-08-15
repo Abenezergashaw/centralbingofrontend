@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, onMounted } from "vue";
 import {
   HomeIcon,
   CurrencyDollarIcon,
@@ -9,9 +9,19 @@ import {
   QuestionMarkCircleIcon,
   UsersIcon,
   GlobeAltIcon,
+  UserIcon,
+  UserCircleIcon,
+  ChevronLeftIcon,
+  CogIcon,
 } from "@heroicons/vue/24/outline";
+import { useMenuStore } from "@/stores/menu";
+import { useUserStore } from "@/stores/user";
 
-defineProps(["modelValue"]);
+// Pinia stores
+const menu = useMenuStore();
+const user = useUserStore();
+
+defineProps(["modelValue", "bg"]);
 const emit = defineEmits(["update:modelValue", "selected-menu"]);
 
 const menuItems = [
@@ -25,9 +35,16 @@ const menuItems = [
   { label: "Language", icon: GlobeAltIcon, value: "language" },
 ];
 
-const selected = ref("home");
+const SettingItems = [
+  { label: "Profile", icon: CogIcon, value: "profile" },
+  { label: "Contact", icon: QuestionMarkCircleIcon, value: "contact" },
+];
+
+const selected = ref(null);
+onMounted(() => {});
 
 function selectMenu() {
+  menu.setSelected(selected.value);
   emit("selected-menu", selected.value);
 }
 </script>
@@ -46,16 +63,24 @@ function selectMenu() {
     style="width: 300px"
   >
     <div
-      class="p-4 flex justify-between items-center border-b dark:border-gray-700"
+      class="flex items-center gap-2 relative h-32 px-6 mb-2 tracking-widest"
     >
-      <h2 class="text-xl font-bold text-gray-800 dark:text-white">Menu</h2>
-      <button
+      <UserCircleIcon class="w-16 h-16 text-black" />
+      <div>
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white">
+          Hey, Player
+        </h2>
+        <h2 class="text-sm font-lg text-gray-800 dark:text-white">
+          {{ user.name }}
+        </h2>
+      </div>
+
+      <ChevronLeftIcon
+        class="w-8 h-8 text-blue-700 absolute top-5 right-4"
         @click="$emit('update:modelValue', false)"
-        class="text-gray-600 dark:text-gray-300 text-2xl"
-      >
-        &times;
-      </button>
+      />
     </div>
+    <hr class="border-b mb-2 border-gray-400 w-[90%] mx-auto" />
     <div class="flex flex-col gap-2 text-gray-800 px-4 py-2">
       <div
         v-for="item in menuItems"
@@ -67,6 +92,27 @@ function selectMenu() {
         class="flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors"
         :class="
           selected === item.value
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-50 hover:bg-blue-100'
+        "
+      >
+        <component :is="item.icon" class="w-5 h-5" />
+        <span class="font-medium">{{ item.label }}</span>
+      </div>
+    </div>
+    <hr class="border-b mb-2 border-gray-400 w-[90%] mx-auto my-6" />
+
+    <div class="flex flex-col gap-2 text-gray-800 px-4 py-2">
+      <div
+        v-for="item in SettingItems"
+        :key="item.value"
+        @click="
+          selected = item.value;
+          selectMenu();
+        "
+        class="flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors"
+        :class="
+          menu.selected === item.value
             ? 'bg-blue-500 text-white'
             : 'bg-gray-50 hover:bg-blue-100'
         "

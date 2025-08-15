@@ -1,8 +1,11 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import axios from "axios";
+import { useUserStore } from "@/stores/user";
 
-const username = ref("934596919");
+const user = useUserStore();
+
+const username = ref(user.user);
 const history = ref([]);
 
 const currentPage = ref(1);
@@ -47,7 +50,7 @@ function goToPage(page) {
 onMounted(async () => {
   try {
     const res = await axios.get("/api/api/general/filter_games", {
-      params: { phone: username.value },
+      params: { phone: user.user },
     });
     history.value = res.data.data;
   } catch (err) {

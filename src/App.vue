@@ -1,18 +1,30 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { RouterView, useRouter } from "vue-router";
+import { onMounted, ref, watch } from "vue";
+import { RouterView, useRouter, useRoute } from "vue-router";
 import InfoNavbar from "./components/InfoNavbar.vue";
 import Navbar from "./components/Navbar.vue";
 import { useBalance } from "./composables/useBalance";
+import { useUserStore } from "./stores/user";
+import { useMenuStore } from "./stores/menu";
+import {
+  preloadAllAudios,
+  unlockAudio,
+  playCachedAudio,
+} from "@/composables/useAudioManager";
+import axios from "axios";
 
 // Composable functions
-const { get_balance } = useBalance();
+const { get_balance, get_both_balance } = useBalance();
+
+// Pinia stores
+const user = useUserStore();
+const menu = useMenuStore();
 
 const router = useRouter();
-
+const route = useRoute();
 // General username
-const username = ref("934596919");
-const balance = ref(0);
+const username = ref(user.user);
+// const balance = ref(user.balance);
 
 const drawerOpen = ref(false);
 
@@ -26,6 +38,7 @@ const menuItems = [
 
 const handleSelectedMenu = (d) => {
   drawerOpen.value = false;
+  menu.setSelected(d);
   if (d === "home") {
     router.push(`/`);
   }
@@ -45,32 +58,63 @@ const handleSelectedMenu = (d) => {
   if (d === "wallet") {
     router.push(`/wallet`);
   }
+  if (d === "profile") {
+    router.push(`/profile`);
+  }
 };
 
+const gotoHome = () => {
+  menu.setSelected("home");
+  router.push(`/`);
+};
+
+menu.init();
 onMounted(async () => {
-  balance.value = await get_balance(username.value);
-  console.log("Balance", username.value, balance.value);
+  preloadAllAudios();
+
+  const b = await get_both_balance(user.user);
+  user.setUserBalance(b.balance, b.bonus);
+
+  const a = await axios.get("/api/api/general/get_name", {
+    params: { phone: user.user },
+  });
+
+  if (a.data.status) {
+    console.log(a.data.data[0].name);
+    user.setName(a.data.data[0].name);
+  }
 });
 </script>
 
 <template>
-  <InfoNavbar :balance="balance" />
+  <InfoNavbar :balance="user.real_balance + user.bonus_balance" />
   <div>
     <!-- Navbar -->
     <header
-      class="flex items-center justify-between p-4 text-white md:w-[98%] my-2 md:rounded-lg mx-auto"
+      class="flex items-center justify-between px-4 text-white md:w-[98%] my-2 md:rounded-lg mx-auto"
       :style="{ backgroundColor: 'var(--nav-bar2)' }"
     >
       <button @click="drawerOpen = true" class="text-2xl md:hidden">☰</button>
-      <div class="hidden md:block">Central Bingo logo</div>
+      <div class="hidden md:block" @click="gotoHome">
+        <img src="./assets/logo.png" class="h-20 w-32" alt="" />
+      </div>
       <div class="hidden md:flex gap-4 text-sm items-center">
         <div v-for="item in menuItems">{{ item.label }}</div>
       </div>
-      <h1 class="text-xl font-bold">My App</h1>
+      <div class="md:hidden" @click="gotoHome">
+        <img src="./assets/logo.png" class="h-20 w-32" alt="" />
+      </div>
+      <div class="hidden md:flex" @click="gotoHome">
+        <div class="h-20 w-32" alt=""></div>
+      </div>
     </header>
 
     <!-- Sliding Drawer -->
-    <Navbar v-model="drawerOpen" @selected-menu="handleSelectedMenu" />
+    <Navbar
+      v-model="drawerOpen"
+      :bg="menu.selected"
+      @selected-menu="handleSelectedMenu"
+    />
   </div>
 
   <RouterView />

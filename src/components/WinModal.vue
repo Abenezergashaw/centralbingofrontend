@@ -1,6 +1,13 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, onMounted } from "vue";
 import Button from "./Button.vue";
+import { useUserStore } from "@/stores/user";
+import { useBalance } from "@/composables/useBalance";
+
+const { get_both_balance } = useBalance();
+
+const user = useUserStore();
+
 const props = defineProps({
   win_cards: Array,
   username: String,
@@ -17,6 +24,11 @@ const columns = ["b", "i", "n", "g", "o"];
 //   return val === null ? "★" : val;
 // }
 
+const get_balance_in = async () => {
+  const b = await get_both_balance(username.value);
+  user.setUserBalance(b.balance, b.bonus);
+};
+
 function getNumber(row, col, index) {
   // console.log("Hey: ", props.win_cards);
 
@@ -24,6 +36,10 @@ function getNumber(row, col, index) {
   const val = props.win_cards[index].card[key];
   return val === null ? "★" : Number(val);
 }
+
+onMounted(() => {
+  props.username == props.win_cards[0].user_id ? get_balance_in() : null;
+});
 </script>
 
 <template>

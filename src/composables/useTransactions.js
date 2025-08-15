@@ -1,13 +1,21 @@
 import axios from "axios";
+import { useUserStore } from "@/stores/user";
+import { useBalance } from "./useBalance";
+import { useLoadingStore } from "@/stores/loading";
 
 export function useTransaction() {
+  const user = useUserStore();
+  const loading = useLoadingStore();
+  const { get_both_balance } = useBalance();
   let state = false;
   let message = "";
   const create_deposit_transaction = async (transaction) => {
+    loading.setLoading(true);
+
     const { txn_id, phone, amount, method, type, status } = transaction;
     try {
       const response = await axios.post(
-        "/api/api/general/create_deposit_transaction",
+        "/api/api/general/auto_create_deposit_transaction",
         {
           txn_id,
           phone,
@@ -21,19 +29,28 @@ export function useTransaction() {
       console.log(phone);
 
       if (response.data.status) {
+        const b = await get_both_balance(phone);
+        user.setUserBalance(b.balance, b.bonus);
+        loading.setLoading(false);
         return {
           state: true,
-          message:
-            "Transaction created. Please wait for verification. Maximim 5 mins.",
+          message: `Deposit successful. ETB ${response.data.amount} has been added to your account.`,
         };
       } else {
         console.warn("⚠️", response.data.message);
       }
     } catch (error) {
+      loading.setLoading(false);
+
       if (error.response?.status === 409) {
         return {
           state: false,
           message: "Transaction reference used before.",
+        };
+      } else if (error.response?.status === 400) {
+        return {
+          state: false,
+          message: "Invalid transaction number.",
         };
       } else {
         return {
@@ -89,9 +106,9 @@ export function useTransaction() {
     });
 
     if (res.data.status) {
-      return res.data.data;
+      return res.data;
     } else {
-      console.error("Error:", res.data.message);
+      return res.data;
     }
   }
 

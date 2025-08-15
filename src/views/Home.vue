@@ -1,4 +1,24 @@
-<script setup></script>
+<script setup>
+import { useMenuStore } from "@/stores/menu";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+
+const menu = useMenuStore();
+
+const router = useRouter();
+
+const handle_game_enter = () => {
+  menu.setSelected("game");
+  router.push("/bingo");
+  console.log(menu.selected, "Game selected");
+};
+
+onMounted(() => {
+  // Set the initial selected menu item
+  menu.setSelected("home");
+  console.log("Menu initialized with selected item:", menu.selected);
+});
+</script>
 
 <template>
   <div class="w-full flex flex-col gap-4 p-2">
@@ -24,6 +44,7 @@
       </div>
 
       <div
+        @click="handle_game_enter"
         class="flex justify-center items-center gap-2 text-xl w-28 p-2 rounded-2xl font-semibold cursor-pointer"
         :style="{ backgroundColor: 'var(--button-color)' }"
       >

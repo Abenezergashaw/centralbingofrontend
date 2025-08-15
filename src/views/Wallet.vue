@@ -1,9 +1,11 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useTransaction } from "@/composables/useTransactions";
 import { useBalance } from "@/composables/useBalance";
 import axios from "axios";
-
+import { useUserStore } from "../stores/user";
+import { useLoadingStore } from "@/stores/loading";
+import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 // composable functions
 const {
   create_deposit_transaction,
@@ -14,9 +16,12 @@ const {
 } = useTransaction();
 const { get_balance, get_both_balance } = useBalance();
 
+// Pinia stores
+const user = useUserStore();
+const loading = useLoadingStore();
 // Generals
-const username = ref("934596919");
-const real_balance = ref(0);
+const username = ref(user.user);
+const real_balance = ref(user.balance);
 const bonus_balance = ref(0);
 const copied = ref(false);
 const success = ref("");
@@ -25,16 +30,17 @@ const error = ref("");
 const userActions = ref(["deposit", "withdraw", "transfer", "history"]);
 const currentUserAction = ref("deposit");
 
-const banks = ["telebirr", "cbe", "boa"];
+const banks = ["telebirr"];
+// const banks = ["telebirr", "cbe", "boa"];
 const accounts = {
-  cbe: {
-    name: "Fanuel Desse",
-    account: "1000475610664",
-  },
-  boa: {
-    name: "Fanuel Desse",
-    account: "168286813",
-  },
+  // cbe: {
+  //   name: "Fanuel Desse",
+  //   account: "1000475610664",
+  // },
+  // boa: {
+  //   name: "Fanuel Desse",
+  //   account: "168286813",
+  // },
   telebirr: {
     name: "Fanuel Desse",
     account: "0938880223",
@@ -42,11 +48,11 @@ const accounts = {
 };
 
 // Deposit
-const deposit_bank = ref("");
+const deposit_bank = ref("telebirr");
 const deposit_message = ref("");
 
 // Withdraw
-const withdraw_bank = ref("");
+const withdraw_bank = ref("telebirr");
 const withdraw_name = ref("");
 const withdraw_account = ref("");
 const withdraw_amount = ref();
@@ -222,6 +228,7 @@ async function handle_transfer() {
   });
   if (res.data.status) {
     get_balance_in();
+
     success.value = res.data.message;
   } else {
     error.value = res.data.message;
@@ -230,15 +237,48 @@ async function handle_transfer() {
 
 const get_balance_in = async () => {
   const b = await get_both_balance(username.value);
-  real_balance.value = b.balance;
-  bonus_balance.value = b.bonus;
+  user.setUserBalance(b.balance, b.bonus);
+};
+
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+
+const totalPages = computed(() =>
+  Math.ceil(transactions.value.length / itemsPerPage.value)
+);
+
+const paginatedTransactions = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return transactions.value.slice(start, end);
+});
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const formatDate = (dateString) => {
+  return new Date(dateString).toISOString().split("T")[0];
 };
 
 onMounted(async () => {
   get_balance_in();
 
   // Load history
-  transactions.value = await get_transactions(username.value);
+  const transactionsRes = await get_transactions(username.value);
+  if (transactionsRes.status) {
+    transactions.value = transactionsRes.data;
+  } else {
+    console.error("Error loading transactions:", transactionsRes.message);
+  }
 });
 </script>
 
@@ -343,7 +383,9 @@ onMounted(async () => {
       class="bg-white rounded-lg text-black flex flex-col justify-center items-center gap-4 h-28 my-2 px-6"
     >
       <span class="text-xl">Main Balance</span>
-      <span class="font-bold tracking-widest">ETB {{ real_balance }} Birr</span>
+      <span class="font-bold tracking-widest"
+        >ETB {{ user.real_balance }} Birr</span
+      >
     </div>
 
     <div
@@ -351,7 +393,7 @@ onMounted(async () => {
     >
       <span class="text-xl">Bonus Balance</span>
       <span class="font-bold tracking-widest"
-        >ETB {{ bonus_balance }} Birr</span
+        >ETB {{ user.bonus_balance }} Birr</span
       >
     </div>
   </div>
@@ -371,7 +413,7 @@ onMounted(async () => {
         <div class="text-sm text-center mb-2 text-black tracking-widest">
           Choose payment method for manual deposit:
         </div>
-        <div class="flex justify-between items-center gap-4">
+        <div class="flex justify-center items-center gap-4">
           <div
             v-for="(bank, index) in banks"
             :key="index"
@@ -440,7 +482,14 @@ onMounted(async () => {
               class="p-2 rounded-lg w-full text-black"
               :placeholder="`Enter the message from ${deposit_bank.toUpperCase()} here and send...`"
             ></textarea>
+
+            <ArrowPathIcon
+              v-if="loading.loading"
+              class="w-8 h-6 animate-spin text-yellow-500 text-center mx-auto my-2"
+              aria-hidden="true"
+            />
             <button
+              v-if="!loading.loading"
               @click="handle_deposit"
               class="bg-yellow-500 w-full p-4 rounded-lg text-black text-base"
             >
@@ -488,7 +537,7 @@ onMounted(async () => {
       </div>
       <div v-if="withdraw_bank !== ''">
         <div class="text-sm mb-1 font-bold">
-          Enter information below for
+          Enter your information below for
           <span class="font-bold">{{ withdraw_bank.toUpperCase() }}</span>
         </div>
         <div class="flex items-center gap-2 w-full my-1">
@@ -591,7 +640,7 @@ onMounted(async () => {
 
       <!-- Transactions Rows -->
       <div
-        v-for="transaction in transactions"
+        v-for="transaction in paginatedTransactions"
         :key="transaction.txn_id"
         class="grid grid-cols-4 text-white p-2 rounded-md mb-2"
         style="background-color: var(--bg-color)"
@@ -600,10 +649,41 @@ onMounted(async () => {
           {{ transaction.type === "d" ? "Deposit" : "Withdraw" }}
         </div>
         <div class="text-center">
-          {{ new Date(transaction.created_at).toISOString().split("T")[0] }}
+          {{ formatDate(transaction.created_at) }}
         </div>
         <div class="text-center">{{ transaction.amount }}</div>
         <div class="text-center capitalize">{{ transaction.status }}</div>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="flex justify-center items-center mt-4 gap-2">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 1"
+          class="px-3 py-1 rounded-md"
+          :class="
+            currentPage === 1
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-500 hover:bg-blue-600'
+          "
+        >
+          Prev
+        </button>
+
+        <span class="mx-2"> Page {{ currentPage }} of {{ totalPages }} </span>
+
+        <button
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="px-3 py-1 rounded-md"
+          :class="
+            currentPage === totalPages
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-500 hover:bg-blue-600'
+          "
+        >
+          Next
+        </button>
       </div>
     </div>
   </div>

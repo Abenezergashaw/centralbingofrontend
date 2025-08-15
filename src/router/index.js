@@ -3,6 +3,7 @@ import History from "@/views/History.vue";
 import Home from "@/views/Home.vue";
 import HowToPlay from "@/views/HowToPlay.vue";
 import Leaderboard from "@/views/Leaderboard.vue";
+import Profile from "@/views/Profile.vue";
 import Wallet from "@/views/Wallet.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -38,6 +39,11 @@ const router = createRouter({
       path: "/wallet",
       name: "wallet",
       component: Wallet,
+    },
+    {
+      path: "/profile",
+      name: "profile",
+      component: Profile,
     },
   ],
 });

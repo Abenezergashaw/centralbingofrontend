@@ -1,7 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useTheme } from "../composables/useTheme";
+import { useRouter } from "vue-router";
+
 const { theme, toggleTheme } = useTheme();
+
+const router = useRouter();
 
 const isOn = ref(false);
 
@@ -13,6 +17,14 @@ const toggle = () => {
   isOn.value = !isOn.value;
   toggleTheme();
 };
+
+const gotoHowto = () => {
+  router.push("/howtoplay");
+};
+
+const gotoWallet = () => {
+  router.push("/wallet");
+};
 </script>
 
 <template>
@@ -20,7 +32,7 @@ const toggle = () => {
     class="w-full flex justify-between items-center px-4 py-1.5"
     style="background-color: var(--nav-bar1)"
   >
-    <div class="w-12 h-12 flex justify-center items-center">
+    <div class="w-12 h-12 flex justify-center items-center" @click="gotoHowto">
       <svg
         stroke="currentColor"
         fill="#FFC107"
@@ -56,6 +68,7 @@ const toggle = () => {
 
       <div
         class="px-8 py-2 rounded-3xl font-semibold flex justify-around items-center gap-2"
+        @click="gotoWallet"
         :style="{ backgroundColor: 'var(--button-color)' }"
       >
         <svg

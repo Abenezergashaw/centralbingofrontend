@@ -4,9 +4,10 @@ export function useBalance() {
   async function get_balance(phone) {
     try {
       const res = await axios.get(
-        "https://centralbingo.duckdns.org/api/general/get_balance",
+        // "https://centralbingo.duckdns.org/api/general/get_balance",
+        "/api/api/general/get_balance",
         {
-          params: { phone: "934596919" },
+          params: { phone },
           headers: { "Cache-Control": "no-cache" },
         }
       );
@@ -28,12 +29,9 @@ export function useBalance() {
 
   async function get_both_balance(phone) {
     try {
-      const res = await axios.get(
-        "https://centralbingo.duckdns.org/api/general/get_balance",
-        {
-          params: { phone },
-        }
-      );
+      const res = await axios.get("/api/api/general/get_balance", {
+        params: { phone },
+      });
 
       if (res.data.status) {
         return { balance: res.data.balance, bonus: res.data.bonus };

@@ -12,6 +12,7 @@ import {
   playCachedAudio,
 } from "@/composables/useAudioManager";
 import axios from "axios";
+import { useUrl } from "./stores/url";
 
 // Composable functions
 const { get_balance, get_both_balance } = useBalance();
@@ -19,6 +20,7 @@ const { get_balance, get_both_balance } = useBalance();
 // Pinia stores
 const user = useUserStore();
 const menu = useMenuStore();
+const url = useUrl();
 
 const router = useRouter();
 const route = useRoute();
@@ -72,11 +74,31 @@ menu.init();
 onMounted(async () => {
   preloadAllAudios();
 
-  const b = await get_both_balance(user.user);
+  const tg = window.Telegram?.WebApp;
+
+  const id = tg.initDataUnsafe?.user.id;
+
+  let phone = null;
+
+  const res = await axios.get(`${url.url}/api/general/get_user`, {
+    params: { id },
+  });
+  console.log("UseUser:", id);
+
+  if (res.data.status) {
+    console.log("UseUser phone:", res.data.phone);
+    phone = res.data.phone;
+    // return res.data.phone;
+  } else {
+    // return 0; // User found, but has no data? (unlikely)
+  }
+
+  user.setUser(phone);
+  const b = await get_both_balance(phone);
   user.setUserBalance(b.balance, b.bonus);
 
-  const a = await axios.get("/api/api/general/get_name", {
-    params: { phone: user.user },
+  const a = await axios.get(`${url.url}/api/general/get_name`, {
+    params: { phone },
   });
 
   if (a.data.status) {

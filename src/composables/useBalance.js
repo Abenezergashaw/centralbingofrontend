@@ -1,11 +1,14 @@
 import axios from "axios";
+import { useUrl } from "@/stores/url";
+
+const url = useUrl();
 
 export function useBalance() {
   async function get_balance(phone) {
     try {
       const res = await axios.get(
         // "https://centralbingo.duckdns.org/api/general/get_balance",
-        "/api/api/general/get_balance",
+        `${url.url}/api/general/get_balance`,
         {
           params: { phone },
           headers: { "Cache-Control": "no-cache" },
@@ -29,7 +32,7 @@ export function useBalance() {
 
   async function get_both_balance(phone) {
     try {
-      const res = await axios.get("/api/api/general/get_balance", {
+      const res = await axios.get(`${url.url}/api/general/get_balance`, {
         params: { phone },
       });
 

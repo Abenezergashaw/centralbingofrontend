@@ -77,6 +77,8 @@ onMounted(async () => {
   const tg = window.Telegram?.WebApp;
 
   const id = tg.initDataUnsafe?.user.id;
+  console.log("tg", tg);
+  console.log("Telegram ID: ", id);
 
   let phone = null;
 

@@ -221,7 +221,7 @@ async function handle_transfer() {
   // });
 
   // Here you can send data to API if needed
-  const res = await axios.post("/api/api/general/transfer", {
+  const res = await axios.post(`${url.url}/apiapi/general/transfer`, {
     phone1: username.value,
     phone2: transferPhone.value,
     amount: parseInt(transferAmount.value, 10),

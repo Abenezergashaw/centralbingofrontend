@@ -10,7 +10,7 @@ const name = ref("Abena Tesfaye");
 const invite = ref("356772918");
 
 const handleSubmit = async () => {
-  const res = await axios.post("/api/api/general/profile", {
+  const res = await axios.post(`${url.url}/api/general/profile`, {
     phone: user.user,
     name: name.value,
   });

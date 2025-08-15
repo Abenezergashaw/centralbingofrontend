@@ -49,7 +49,7 @@ function goToPage(page) {
 
 onMounted(async () => {
   try {
-    const res = await axios.get("/api/api/general/filter_games", {
+    const res = await axios.get(`${url.url}/api/general/filter_games`, {
       params: { phone: user.user },
     });
     history.value = res.data.data;

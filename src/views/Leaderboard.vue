@@ -27,7 +27,7 @@ const handleGameChange = (value) => {
 
 const getData = async () => {
   try {
-    const res = await axios.post("/api/api/general/leaderboard", {
+    const res = await axios.post(`${url.url}/api/general/leaderboard`, {
       game: game.value,
       phone: user.user,
     });

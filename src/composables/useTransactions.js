@@ -2,10 +2,12 @@ import axios from "axios";
 import { useUserStore } from "@/stores/user";
 import { useBalance } from "./useBalance";
 import { useLoadingStore } from "@/stores/loading";
+import { useUrl } from "@/stores/url";
 
 export function useTransaction() {
   const user = useUserStore();
   const loading = useLoadingStore();
+  const url = useUrl();
   const { get_both_balance } = useBalance();
   let state = false;
   let message = "";
@@ -15,7 +17,7 @@ export function useTransaction() {
     const { txn_id, phone, amount, method, type, status } = transaction;
     try {
       const response = await axios.post(
-        "/api/api/general/auto_create_deposit_transaction",
+        `${url.url}/api/general/auto_create_deposit_transaction`,
         {
           txn_id,
           phone,
@@ -65,7 +67,7 @@ export function useTransaction() {
     const { phone, amount, method, type, account, name, status } = transaction;
     try {
       const response = await axios.post(
-        "/api/api/general/create_withdraw_transaction",
+        `${url.url}/api/general/create_withdraw_transaction`,
         {
           phone,
           amount,
@@ -101,7 +103,7 @@ export function useTransaction() {
   };
 
   async function get_transactions(phone) {
-    const res = await axios.get("/api/api/general/transactions", {
+    const res = await axios.get(`${url.url}/api/general/transactions`, {
       params: { phone },
     });
 
@@ -113,7 +115,7 @@ export function useTransaction() {
   }
 
   async function get_pending_transactions(phone, date) {
-    const res = await axios.get("/api/api/general/pending_transactions", {
+    const res = await axios.get(`${url.url}/api/general/pending_transactions`, {
       params: { phone, date },
     });
 
@@ -127,12 +129,15 @@ export function useTransaction() {
   const confirm_transactions = async (phone, amount, type, txn_id) => {
     console.log(txn_id, phone, amount, type);
     try {
-      const res = await axios.post("/api/api/general/confirm_transaction", {
-        phone,
-        amount,
-        type,
-        txn_id,
-      });
+      const res = await axios.post(
+        `${url.url}/api/general/confirm_transaction`,
+        {
+          phone,
+          amount,
+          type,
+          txn_id,
+        }
+      );
 
       // Axios puts the response body in `res.data`
       const data = res.data;

@@ -74,10 +74,11 @@ menu.init();
 onMounted(async () => {
   preloadAllAudios();
 
-  const tg = window.Telegram?.WebApp;
+  // const tg = window.Telegram?.WebApp;
 
-  const id = tg.initDataUnsafe?.user.id;
-  console.log("tg", tg);
+  // const id = tg.initDataUnsafe?.user.id;
+  const id = "353008986";
+  // console.log("tg", tg);
   console.log("Telegram ID: ", id);
 
   let phone = null;

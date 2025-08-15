@@ -169,6 +169,7 @@ socket.on("game-starting", (d) => {
       selected_game.value?.players?.find((p) => p.user_id === username.value)
         ?.cartela_number || [];
     playingCards.value = get_card(CartelaNumbers);
+    console.log("Heyyyyyyyyy");
   }
 });
 
@@ -192,11 +193,11 @@ socket.on("finished_calling", (d) => {
 
 socket.on("drawing_numbers", (d) => {
   selected_game.value = JSON.parse(d);
-  // if (gameState.value === "game") {
-  if (!audio.value) {
-    playCachedAudio(`sound${selected_game.value.current_number}`);
+  if (gameState.value === "game") {
+    if (!audio.value) {
+      playCachedAudio(`sound${selected_game.value.current_number}`);
+    }
   }
-  // }
 });
 
 socket.on("bingo", (winners_data, drawn_numbers, current_number, l, c) => {
@@ -249,19 +250,19 @@ function get_letter(n) {
   }
   if (n >= 31 && n < 46) {
     return {
-      letter: "B",
+      letter: "N",
       bg: "bg-purple-600",
     };
   }
   if (n >= 46 && n < 61) {
     return {
-      letter: "B",
+      letter: "G",
       bg: "bg-cyan-700",
     };
   }
   if (n >= 61 && n < 76) {
     return {
-      letter: "B",
+      letter: "O",
       bg: "bg-orange-500",
     };
   }
@@ -648,7 +649,8 @@ onBeforeUnmount(() => {
             'flex',
             'justify-center',
             'items-center',
-            get_letter(selected_game.current_number).bg,
+            'bg-purple-800',
+            // get_letter(selected_game.current_number).bg,
           ]"
         >
           <div
@@ -658,7 +660,8 @@ onBeforeUnmount(() => {
               class="w-32 h-32 bg-white rounded-full flex flex-col justify-center items-center text-[65px] font-semibold"
             >
               <div class="text-[30px]">
-                {{ get_letter(selected_game.current_number).letter }}
+                <!-- {{ get_letter(selected_game.current_number).letter }} -->
+                B
               </div>
               <div>{{ selected_game.current_number }}</div>
             </div>

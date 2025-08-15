@@ -83,7 +83,7 @@ onMounted(async () => {
   let phone = null;
 
   const res = await axios.get(`${url.url}/api/general/get_user`, {
-    params: { id },
+    params: { telegram_id: id },
   });
   console.log("UseUser:", id);
 

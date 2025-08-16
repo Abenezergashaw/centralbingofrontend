@@ -6,6 +6,8 @@ import axios from "axios";
 import { useUserStore } from "../stores/user";
 import { useLoadingStore } from "@/stores/loading";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
+import { useUrl } from "@/stores/url";
+
 // composable functions
 const {
   create_deposit_transaction,
@@ -19,6 +21,8 @@ const { get_balance, get_both_balance } = useBalance();
 // Pinia stores
 const user = useUserStore();
 const loading = useLoadingStore();
+const url = useUrl();
+
 // Generals
 const username = ref(user.user);
 const real_balance = ref(user.balance);
@@ -221,7 +225,7 @@ async function handle_transfer() {
   // });
 
   // Here you can send data to API if needed
-  const res = await axios.post(`${url.url}/apiapi/general/transfer`, {
+  const res = await axios.post(`${url.url}/api/general/transfer`, {
     phone1: username.value,
     phone2: transferPhone.value,
     amount: parseInt(transferAmount.value, 10),

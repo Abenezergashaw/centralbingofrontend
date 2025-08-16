@@ -31,7 +31,7 @@ const menuItems = [
   { label: "Wallet", icon: CurrencyDollarIcon, value: "wallet" },
   { label: "Leaderboard", icon: TrophyIcon, value: "leaderboard" },
   { label: "How To Play", icon: QuestionMarkCircleIcon, value: "howto" },
-  { label: "Referral Income", icon: UsersIcon, value: "referral" },
+  { label: "Referral Income", icon: UsersIcon, value: "referrals" },
   { label: "Language", icon: GlobeAltIcon, value: "language" },
 ];
 

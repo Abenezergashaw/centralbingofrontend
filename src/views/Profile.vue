@@ -2,11 +2,13 @@
 import { ref } from "vue";
 import { useUserStore } from "@/stores/user";
 import axios from "axios";
+import { useUrl } from "@/stores/url";
 
 const user = useUserStore();
+const url = useUrl();
 
 const phone = ref(user.user);
-const name = ref("Abena Tesfaye");
+const name = ref(user.name);
 const invite = ref("356772918");
 
 const handleSubmit = async () => {
@@ -16,6 +18,7 @@ const handleSubmit = async () => {
   });
 
   if (res.data.success) {
+    user.setName(res.data.name);
     alert("Profile updated successfully!");
   } else {
     alert("Failed to update profile. Please try again.");

@@ -2,8 +2,10 @@
 import { ref, onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
 import axios from "axios";
+import { useUrl } from "@/stores/url";
 
 const user = useUserStore();
+const url = useUrl();
 
 const game = ref(10);
 

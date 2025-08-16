@@ -287,6 +287,7 @@ socket.on("finished_calling", (d) => {
     game.value = null;
     dn.value = [];
     cn.value = null;
+    cc.value = null;
   }
 });
 const dn = ref([]);
@@ -383,11 +384,7 @@ const handle_bingo = (id) => {
   const isBlocked = card ? card.is_blocked === true : false;
   if (!isBlocked) {
     if (selected_game.value.active) {
-      const bingo = check_win(
-        id,
-        selected_game.value.drawn_numbers,
-        selected_game.value.current_number
-      );
+      const bingo = check_win(id, dn.value, cn.value);
       if (bingo.status) {
         socket.emit("bingo", game.value, id, username.value);
       } else {
@@ -409,6 +406,7 @@ const handle_game_end = () => {
   game.value = null;
   dn.value = [];
   cn.value = null;
+  cc.value = null;
 };
 
 const handle_card_confirm = () => {
@@ -806,7 +804,5 @@ onBeforeUnmount(() => {
 
   /* Rotate 20 degrees */
   transform: rotate(-45deg);
-
-  /* Adjust origin if you want to rotate around a different point */
 }
 </style>

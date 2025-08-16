@@ -4,6 +4,7 @@ import Home from "@/views/Home.vue";
 import HowToPlay from "@/views/HowToPlay.vue";
 import Leaderboard from "@/views/Leaderboard.vue";
 import Profile from "@/views/Profile.vue";
+import Refferals from "@/views/Refferals.vue";
 import Wallet from "@/views/Wallet.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -44,6 +45,11 @@ const router = createRouter({
       path: "/profile",
       name: "profile",
       component: Profile,
+    },
+    {
+      path: "/referrals",
+      name: "referrals",
+      component: Refferals,
     },
   ],
 });

@@ -19,5 +19,8 @@ export const useUserStore = defineStore("user", {
     setName(a) {
       this.name = a;
     },
+    setId(id) {
+      this.id = id;
+    },
   },
 });

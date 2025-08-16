@@ -46,7 +46,7 @@ const accounts = {
   //   account: "168286813",
   // },
   telebirr: {
-    name: "SOLOMON TADELO MANZENGIA",
+    name: "SOLOMON TADELO",
     account: "0918159201",
   },
 };

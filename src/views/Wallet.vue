@@ -110,7 +110,7 @@ const handle_deposit = async () => {
   if (amount && reference) {
     const transaction = {
       txn_id: reference,
-      phone: username.value,
+      phone: user.user,
       amount,
       method: deposit_bank.value,
       type: "d",

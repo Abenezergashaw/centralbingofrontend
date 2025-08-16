@@ -79,8 +79,8 @@ onMounted(async () => {
 
   const tg = window.Telegram?.WebApp;
 
-  // const id = tg.initDataUnsafe?.user.id;
-  const id = "353008986";
+  const id = tg.initDataUnsafe?.user.id;
+  // const id = "353008986";
   // console.log("tg", tg);
 
   user.setId(id);

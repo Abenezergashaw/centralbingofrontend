@@ -2,9 +2,9 @@
 import { onMounted, ref, computed } from "vue";
 import axios from "axios";
 import { useUserStore } from "@/stores/user";
-
+import { useUrl } from "@/stores/url";
 const user = useUserStore();
-
+const url = useUrl();
 const username = ref(user.user);
 const history = ref([]);
 

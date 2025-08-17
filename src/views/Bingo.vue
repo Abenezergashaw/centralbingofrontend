@@ -412,7 +412,7 @@ const handle_game_end = () => {
 };
 
 const handle_card_confirm = () => {
-  socket.emit("entering_game", game.value, username.value);
+  // socket.emit("entering_game", game.value, username.value);
   confirmed.value = true;
   // handle_audio();
 };

@@ -91,7 +91,7 @@ function selectMenu() {
         "
         class="flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors"
         :class="
-          selected === item.value
+          menu.selected === item.value
             ? 'bg-blue-500 text-white'
             : 'bg-gray-50 hover:bg-blue-100'
         "

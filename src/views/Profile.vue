@@ -39,7 +39,7 @@ const handleSubmit = async () => {
         v-model="phone"
         type="text"
         readonly
-        placeholder="You can edit this"
+        placeholder="Phone Number"
         class="w-full text-black tracking-widest px-3 py-2 opacity-75 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
@@ -50,7 +50,7 @@ const handleSubmit = async () => {
         id="uneditable1"
         v-model="name"
         type="text"
-        placeholder="Can't edit this"
+        placeholder="Name"
         class="w-full text-black tracking-widest px-3 py-2 border rounded bg-gray-100 cursor-not-allowed"
       />
     </div>

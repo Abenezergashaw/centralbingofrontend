@@ -106,6 +106,8 @@ onMounted(async () => {
   const b = await get_both_balance(phone);
   user.setUserBalance(b.balance, b.bonus);
 
+  console.log("Balance", b);
+
   const a = await axios.get(`${url.url}/api/general/get_name`, {
     params: { phone },
   });

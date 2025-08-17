@@ -96,6 +96,8 @@ const join_game = (g) => {
   game.value = g;
   game.value = g;
   gameState.value = "card-select";
+  unlockAudio();
+
   socket.emit(`join_room`, `game_${game.value}`, username.value, game.value);
   // }
 };

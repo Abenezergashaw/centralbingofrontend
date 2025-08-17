@@ -9,7 +9,7 @@ const url = useUrl();
 
 const phone = ref(user.user);
 const name = ref(user.name);
-const invite = ref("356772918");
+const invite = ref(user.id);
 
 const handleSubmit = async () => {
   const res = await axios.post(`${url.url}/api/general/profile`, {

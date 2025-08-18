@@ -94,9 +94,10 @@ onMounted(async () => {
   preloadAllAudios();
 
   // const id = tg.initDataUnsafe?.user.id;
+  let id = null;
   (async () => {
     try {
-      const id = await getTelegramId();
+      id = await getTelegramId();
       console.log("Telegram ID:", id);
     } catch (err) {
       console.error(err.message);

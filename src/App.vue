@@ -99,46 +99,46 @@ onMounted(async () => {
     try {
       id = await getTelegramId();
       console.log("aaa ID:", id);
+
+      user.setId(id);
+
+      console.log("Telegram ID: ", id);
+
+      let phone = null;
+
+      const res = await axios.get(`${url.url}/api/general/get_user`, {
+        params: { telegram_id: id },
+      });
+      console.log("UseUser:", id);
+
+      if (res.data.status) {
+        console.log("UseUser phone:", res.data.phone);
+        phone = res.data.phone;
+        // return res.data.phone;
+      } else {
+        // return 0; // User found, but has no data? (unlikely)
+      }
+
+      user.setUser(phone);
+      const b = await get_both_balance(phone);
+      user.setUserBalance(b.balance, b.bonus);
+
+      console.log("Balance", b);
+
+      const a = await axios.get(`${url.url}/api/general/get_name`, {
+        params: { phone },
+      });
+
+      if (a.data.status) {
+        console.log(a.data.data[0].name);
+        user.setName(a.data.data[0].name);
+      }
     } catch (err) {
       console.error(err.message);
     }
   })();
   // const id = "353008986";
   // console.log("tg", tg);
-
-  user.setId(id);
-
-  console.log("Telegram ID: ", id);
-
-  let phone = null;
-
-  const res = await axios.get(`${url.url}/api/general/get_user`, {
-    params: { telegram_id: id },
-  });
-  console.log("UseUser:", id);
-
-  if (res.data.status) {
-    console.log("UseUser phone:", res.data.phone);
-    phone = res.data.phone;
-    // return res.data.phone;
-  } else {
-    // return 0; // User found, but has no data? (unlikely)
-  }
-
-  user.setUser(phone);
-  const b = await get_both_balance(phone);
-  user.setUserBalance(b.balance, b.bonus);
-
-  console.log("Balance", b);
-
-  const a = await axios.get(`${url.url}/api/general/get_name`, {
-    params: { phone },
-  });
-
-  if (a.data.status) {
-    console.log(a.data.data[0].name);
-    user.setName(a.data.data[0].name);
-  }
 });
 </script>
 

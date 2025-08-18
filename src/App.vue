@@ -98,7 +98,7 @@ onMounted(async () => {
   (async () => {
     try {
       id = await getTelegramId();
-      console.log("Telegram ID:", id);
+      console.log("aaa ID:", id);
     } catch (err) {
       console.error(err.message);
     }

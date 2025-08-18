@@ -75,6 +75,8 @@ const gotoHome = () => {
 
 async function getTelegramId(retries = 5, delay = 500) {
   for (let i = 0; i < retries; i++) {
+    const tg = window.Telegram?.WebApp;
+
     const id = tg.initDataUnsafe?.user?.id;
     if (id) {
       return id; // ✅ got it
@@ -90,8 +92,6 @@ async function getTelegramId(retries = 5, delay = 500) {
 menu.init();
 onMounted(async () => {
   preloadAllAudios();
-
-  const tg = window.Telegram?.WebApp;
 
   // const id = tg.initDataUnsafe?.user.id;
   (async () => {

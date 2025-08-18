@@ -73,13 +73,35 @@ const gotoHome = () => {
   router.push(`/`);
 };
 
+async function getTelegramId(retries = 5, delay = 500) {
+  for (let i = 0; i < retries; i++) {
+    const id = tg.initDataUnsafe?.user?.id;
+    if (id) {
+      return id; // ✅ got it
+    }
+
+    // wait before retrying
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+
+  throw new Error("Unable to fetch Telegram ID after retries");
+}
+
 menu.init();
 onMounted(async () => {
   preloadAllAudios();
 
   const tg = window.Telegram?.WebApp;
 
-  const id = tg.initDataUnsafe?.user.id;
+  // const id = tg.initDataUnsafe?.user.id;
+  (async () => {
+    try {
+      const id = await getTelegramId();
+      console.log("Telegram ID:", id);
+    } catch (err) {
+      console.error(err.message);
+    }
+  })();
   // const id = "353008986";
   // console.log("tg", tg);
 

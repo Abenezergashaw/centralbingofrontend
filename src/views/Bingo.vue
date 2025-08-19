@@ -458,7 +458,7 @@ async function getTelegramId(retries = 5, delay = 500) {
 
 onMounted(async () => {
   preloadAllAudios(true);
-
+  let id = null;
   (async () => {
     try {
       id = await getTelegramId();

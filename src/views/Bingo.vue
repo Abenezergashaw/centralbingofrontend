@@ -442,10 +442,10 @@ const selectRandomNumber = () => {
 
 onMounted(async () => {
   preloadAllAudios(true);
-  balance.value = await get_balance(username.value);
+  balance.value = await get_balance(user.user);
 
   socket.on("connect", () => {
-    socket.emit("set_username", username.value);
+    socket.emit("set_username", user.user);
   });
 });
 

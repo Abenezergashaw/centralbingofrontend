@@ -894,7 +894,7 @@ onBeforeUnmount(() => {
     v-if="is_bingo"
     :win_cards="win_card"
     @continue="handle_game_end"
-    :username="username"
+    :username="user.user"
   />
 </template>
 

@@ -16,6 +16,7 @@ import {
   playCachedAudio,
 } from "@/composables/useAudioManager";
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/vue/24/outline";
+import axios from "axios";
 
 // Composable functions
 const { get_balance, get_both_balance } = useBalance();

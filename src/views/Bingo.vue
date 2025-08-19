@@ -100,21 +100,19 @@ const join_game = (g) => {
   gameState.value = "card-select";
   unlockAudio();
 
-  socket.emit(`join_room`, `game_${game.value}`, username.value, game.value);
+  socket.emit(`join_room`, `game_${game.value}`, user.user, game.value);
   // }
 };
 
 const cartela_selected = (c) => {
   confirmed.value = false;
-  socket.emit("cartela_to_home", username.value, game.value);
-  socket.emit("cartela_selected", c, game.value, username.value);
+  socket.emit("cartela_to_home", user.user, game.value);
+  socket.emit("cartela_selected", c, game.value, user.user);
 };
 
 socket.on(`selected_card_respose_10`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -126,9 +124,7 @@ socket.on(`selected_card_respose_10`, (d) => {
 
 socket.on(`selected_card_respose_20`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -140,9 +136,7 @@ socket.on(`selected_card_respose_20`, (d) => {
 
 socket.on(`selected_card_respose_30`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -154,9 +148,7 @@ socket.on(`selected_card_respose_30`, (d) => {
 
 socket.on(`selected_card_respose_50`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -167,9 +159,7 @@ socket.on(`selected_card_respose_50`, (d) => {
 });
 socket.on(`selected_card_respose_80`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -181,9 +171,7 @@ socket.on(`selected_card_respose_80`, (d) => {
 
 socket.on(`selected_card_respose_100`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -195,9 +183,7 @@ socket.on(`selected_card_respose_100`, (d) => {
 
 socket.on(`selected_card_respose_150`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -209,9 +195,7 @@ socket.on(`selected_card_respose_150`, (d) => {
 
 socket.on(`selected_card_respose_200`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -223,9 +207,7 @@ socket.on(`selected_card_respose_200`, (d) => {
 
 socket.on(`selected_card_respose_300`, (d) => {
   selected_game.value = JSON.parse(d);
-  const f = selected_game.value.players.find(
-    (p) => p.user_id === username.value
-  );
+  const f = selected_game.value.players.find((p) => p.user_id === user.user);
 
   if (f) {
     const cartela = f.cartela_number;
@@ -250,7 +232,7 @@ const getNumberColor = (number) => {
     if (!match)
       return "bg-gradient-to-br from-[#edefff] to-[#fff] opacity-85 rounded"; // Not selected
 
-    return match.user_id === username.value
+    return match.user_id === user.user
       ? `${confirmed ? "bg-green-500 rounded-xl" : "bg-red-600 rounded-xl"}`
       : "bg-blue-600 opacity-100 rounded-xl text-white";
   } else {
@@ -262,12 +244,12 @@ const getNumberColor = (number) => {
 socket.on("game-starting", (d) => {
   const players = JSON.parse(d).players || [];
   const userIds = players.map((p) => p.user_id);
-  const exists = userIds.includes(username.value);
+  const exists = userIds.includes(user.user);
   if (exists) {
     gameState.value = "game";
     get_balance_in();
     const CartelaNumbers =
-      selected_game.value?.players?.find((p) => p.user_id === username.value)
+      selected_game.value?.players?.find((p) => p.user_id === user.user)
         ?.cartela_number || [];
     playingCards.value = get_card(CartelaNumbers);
     console.log("Heyyyyyyyyy");
@@ -283,7 +265,7 @@ socket.on("finished_calling", (d) => {
   // console.log("finished_calling", d);
   const players = JSON.parse(d).players || [];
   const userIds = players.map((p) => p.user_id);
-  const exists = userIds.includes(username.value);
+  const exists = userIds.includes(user.user);
   if (exists) {
     gameState.value = "game-select";
     is_bingo.value = false;
@@ -390,7 +372,7 @@ const handle_bingo = (id) => {
     if (selected_game.value.active) {
       const bingo = check_win(id, dn.value, cn.value);
       if (bingo.status) {
-        socket.emit("bingo", game.value, id, username.value);
+        socket.emit("bingo", game.value, id, user.user);
       } else {
         for (const card of playingCards.value) {
           if (card.id === id) {
@@ -414,13 +396,13 @@ const handle_game_end = () => {
 };
 
 const handle_card_confirm = () => {
-  // socket.emit("entering_game", game.value, username.value);
+  // socket.emit("entering_game", game.value, user.user);
   confirmed.value = true;
   // handle_audio();
 };
 
 const handle_go_back = () => {
-  socket.emit("go_back", game.value, username.value);
+  socket.emit("go_back", game.value, user.user);
   confirmed.value = true;
 };
 

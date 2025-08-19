@@ -17,7 +17,7 @@ import {
 } from "@/composables/useAudioManager";
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/vue/24/outline";
 import axios from "axios";
-
+import { useUrl } from "@/stores/url";
 // Composable functions
 const { get_balance, get_both_balance } = useBalance();
 const { get_card } = useCard();
@@ -26,6 +26,7 @@ const { check_win } = useBingo();
 // pinia stores
 const menu = useMenuStore();
 const user = useUserStore();
+const url = useUrl();
 
 menu.setSelected("game");
 

@@ -442,6 +442,9 @@ const selectRandomNumber = () => {
 
 onMounted(async () => {
   preloadAllAudios(true);
+
+  console.log("Mounted Bingo.vue", user.user, user);
+
   balance.value = await get_balance(user.user);
 
   socket.on("connect", () => {

@@ -440,16 +440,57 @@ const selectRandomNumber = () => {
   cartela_selected(a);
 };
 
+async function getTelegramId(retries = 5, delay = 500) {
+  for (let i = 0; i < retries; i++) {
+    const tg = window.Telegram?.WebApp;
+
+    const id = tg.initDataUnsafe?.user?.id;
+    if (id) {
+      return id; // ✅ got it
+    }
+
+    // wait before retrying
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+
+  throw new Error("Unable to fetch Telegram ID after retries");
+}
+
 onMounted(async () => {
   preloadAllAudios(true);
 
-  console.log("Mounted Bingo.vue", user.user, user);
+  (async () => {
+    try {
+      id = await getTelegramId();
+      // const id = "353008986";
 
-  balance.value = await get_balance(user.user);
+      console.log("Telegram ID: ", id);
 
-  socket.on("connect", () => {
-    socket.emit("set_username", user.user);
-  });
+      let phone = null;
+
+      const res = await axios.get(`${url.url}/api/general/get_user`, {
+        params: { telegram_id: id },
+      });
+      console.log("UseUser:", id);
+
+      if (res.data.status) {
+        console.log("UseUser phone:", res.data.phone);
+        phone = res.data.phone;
+        // return res.data.phone;
+      } else {
+        // return 0; // User found, but has no data? (unlikely)
+      }
+      console.log("Mounted Bingo.vue", phone);
+
+      balance.value = await get_balance(phone);
+
+      socket.on("connect", () => {
+        socket.emit("set_username", phone);
+      });
+    } catch (err) {
+      console.error(err.message);
+    }
+  })();
 });
 
 onBeforeUnmount(() => {

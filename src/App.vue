@@ -98,6 +98,8 @@ onMounted(async () => {
   (async () => {
     try {
       id = await getTelegramId();
+      // const id = "353008986";
+
       console.log("aaa ID:", id);
 
       user.setId(id);
@@ -137,7 +139,6 @@ onMounted(async () => {
       console.error(err.message);
     }
   })();
-  // const id = "353008986";
   // console.log("tg", tg);
 });
 </script>

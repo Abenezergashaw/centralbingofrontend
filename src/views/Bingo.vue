@@ -777,7 +777,86 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <div class="text-white">asd</div>
+        <div class="flex justify-center items-center gap-1 mt-2">
+          <div
+            :class="[
+              'w-16',
+              'h-16',
+
+              'rounded-full',
+              'flex',
+              'justify-center',
+              'items-center',
+              'bg-purple-800',
+              get_letter(cn).bg,
+            ]"
+          >
+            <div
+              class="w-12 h-12 rounded-full border-4 border-white flex flex-col justify-center items-center text-black"
+            >
+              <div
+                class="w-8 h-8 bg-white rounded-full flex flex-col justify-center items-center text-[14px] font-semibold"
+              >
+                <div class="text-[12px]">
+                  {{ get_letter(dn[cc - 1]).letter }}
+                </div>
+                <div>{{ dn[cc - 1] }}</div>
+              </div>
+            </div>
+          </div>
+          <div
+            :class="[
+              'w-16',
+              'h-16',
+
+              'rounded-full',
+              'flex',
+              'justify-center',
+              'items-center',
+              'bg-purple-800',
+              get_letter(cn).bg,
+            ]"
+          >
+            <div
+              class="w-12 h-12 rounded-full border-4 border-white flex flex-col justify-center items-center text-black"
+            >
+              <div
+                class="w-8 h-8 bg-white rounded-full flex flex-col justify-center items-center text-[14px] font-semibold"
+              >
+                <div class="text-[12px]">
+                  {{ get_letter(dn[cc - 2]).letter }}
+                </div>
+                <div>{{ dn[cc - 2] }}</div>
+              </div>
+            </div>
+          </div>
+          <div
+            :class="[
+              'w-16',
+              'h-16',
+
+              'rounded-full',
+              'flex',
+              'justify-center',
+              'items-center',
+              'bg-purple-800',
+              get_letter(cn).bg,
+            ]"
+          >
+            <div
+              class="w-12 h-12 rounded-full border-4 border-white flex flex-col justify-center items-center text-black"
+            >
+              <div
+                class="w-8 h-8 bg-white rounded-full flex flex-col justify-center items-center text-[14px] font-semibold"
+              >
+                <div class="text-[12px]">
+                  {{ get_letter(dn[cc - 3]).letter }}
+                </div>
+                <div>{{ dn[cc - 3] }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
         <Card :cards="playingCards" @bingo="handle_bingo" />
       </div>
     </div>

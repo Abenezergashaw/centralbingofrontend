@@ -104,14 +104,19 @@ const extract_messages = () => {
 
   return { amount: null, reference: null };
 };
+function isAlphanumeric(str) {
+  if (!str) return false;
+  return /^[A-Za-z0-9]+$/.test(str);
+}
 
 const handle_deposit = async () => {
-  const { amount, reference } = extract_messages();
-  if (amount && reference) {
+  // const { amount, reference } = extract_messages();
+  if (isAlphanumeric(deposit_message.value)) {
+    // if (amount && reference) {
     const transaction = {
-      txn_id: reference,
+      txn_id: deposit_message.value,
       phone: user.user,
-      amount,
+      amount: 10,
       method: deposit_bank.value,
       type: "d",
       status: "pending",
@@ -124,8 +129,9 @@ const handle_deposit = async () => {
     } else {
       error.value = res.message;
     }
+    // }
   } else {
-    error.value = "Text can not be read. Please check and try again.";
+    error.value = "Invalid reference code. Please check and try again.";
   }
 };
 
@@ -475,7 +481,7 @@ onMounted(async () => {
           <div class="text-center text-black">
             Deposit the amount you want to the above account from
             <span class="font-bold">{{ deposit_bank.toUpperCase() }}</span> and
-            send the confirmation message from the bank below.
+            send the reference code you get from the Telebirr.
           </div>
           <hr class="w-full bg-black my-2" />
           <div>

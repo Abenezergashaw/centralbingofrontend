@@ -99,8 +99,8 @@ onMounted(async () => {
   let id = null;
   (async () => {
     try {
-      // id = await getTelegramId();
-      id = "353008986";
+      id = await getTelegramId();
+      // id = "353008986";
 
       console.log("aaa ID:", id);
 

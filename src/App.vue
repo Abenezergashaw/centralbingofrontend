@@ -17,6 +17,8 @@ import { useUrl } from "./stores/url";
 // Composable functions
 const { get_balance, get_both_balance } = useBalance();
 
+const loading = ref(true);
+
 // Pinia stores
 const user = useUserStore();
 const menu = useMenuStore();
@@ -97,8 +99,8 @@ onMounted(async () => {
   let id = null;
   (async () => {
     try {
-      id = await getTelegramId();
-      // id = "353008986";
+      // id = await getTelegramId();
+      id = "353008986";
 
       console.log("aaa ID:", id);
 
@@ -134,6 +136,9 @@ onMounted(async () => {
       if (a.data.status) {
         console.log(a.data.data[0].name);
         user.setName(a.data.data[0].name);
+        if (b !== NaN) {
+          loading.value = false;
+        }
       }
     } catch (err) {
       console.error(err.message);
@@ -144,6 +149,22 @@ onMounted(async () => {
 </script>
 
 <template>
+  <div
+    v-if="loading"
+    class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-20"
+  >
+    <!-- Modal Box -->
+    <div class="">
+      <div
+        class="w-14 h-14 rounded-full border-[6px] animate-spin"
+        :style="{
+          borderColor: 'var(--nav-bar2)',
+          borderTopColor: 'var(--nav-bar1)',
+        }"
+      ></div>
+    </div>
+  </div>
+
   <InfoNavbar :balance="user.real_balance + user.bonus_balance" />
   <div>
     <!-- Navbar -->

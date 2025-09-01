@@ -172,15 +172,23 @@ onMounted(async () => {
       class="flex items-center justify-between px-4 text-white md:w-[98%] my-2 md:rounded-lg mx-auto"
       :style="{ backgroundColor: 'var(--nav-bar2)' }"
     >
-      <button @click="drawerOpen = true" class="text-2xl md:hidden">☰</button>
+      <button
+        @click="drawerOpen = true"
+        class="text-[42px] md:hidden border border-gray-100 border-opacity-30"
+      >
+        ☰
+      </button>
       <div class="hidden md:block" @click="gotoHome">
         <img src="./assets/logo.png" class="h-20 w-32" alt="" />
       </div>
       <div class="hidden md:flex gap-4 text-sm items-center">
         <div v-for="item in menuItems">{{ item.label }}</div>
       </div>
-      <div class="md:hidden" @click="gotoHome">
-        <img src="./assets/logo.png" class="h-20 w-32" alt="" />
+      <div
+        class="md:hidden border border-gray-100 border-opacity-30"
+        @click="gotoHome"
+      >
+        <img src="./assets/logo.png" class="h-24 aspect-square" alt="" />
       </div>
       <div class="hidden md:flex" @click="gotoHome">
         <div class="h-20 w-32" alt=""></div>

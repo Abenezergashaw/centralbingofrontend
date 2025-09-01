@@ -17,6 +17,21 @@ html.theme-light {
   --new-bg: #143e5b;
 }
 
+/* html.theme-light {
+  --bg-color: #f6160e;
+  --text-color: #fff;
+  --nav-bar1: #b83a35;
+  --nav-bar2: #481a18;
+  --button-color: #240504;
+  ---toggle-bg: #881c18;
+  --toggle-btn: #000000;
+  --from-gradient: #86504e;
+  --to-gradient: #7e2c29;
+  --how-bg: #3f0f0e;
+  --cards-bg: #a38180;
+  --new-bg: #421615;
+} */
+
 html.theme-dark {
   --bg-color: #3a1957;
   --text-color: #800080;
@@ -26,7 +41,7 @@ html.theme-dark {
   ---toggle-bg: #4a0a4a;
   --toggle-btn: #ffce00;
   --from-gradient: #775f8c;
-  --to-gradient: #3c1b5b;
+  --to-gradient: #452662;
   --how-bg: #2f2042;
   --cards-bg: #9a8aaa;
   --new-bg: #2f2042;

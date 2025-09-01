@@ -293,7 +293,26 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="w-full h-40 bg-white mt-20 p-4 text-black flex gap-2">
+  <div class="flex justify-center items-center gap-4 my-2">
+    <div
+      class="bg-white rounded-lg text-black flex flex-col justify-center items-center gap-4 my-2 px-6 py-2"
+    >
+      <span class="text-xl">Main Balance</span>
+      <span class="font-bold tracking-widest"
+        >ETB {{ user.real_balance }} Birr</span
+      >
+    </div>
+
+    <div
+      class="bg-white rounded-lg text-black flex justify-center items-center gap-4 py-2 my-2 px-6 flex-col"
+    >
+      <span class="text-xl">Bonus Balance</span>
+      <span class="font-bold tracking-widest"
+        >ETB {{ user.bonus_balance }} Birr</span
+      >
+    </div>
+  </div>
+  <div class="w-full h-36 bg-white mt-2 p-4 text-black flex gap-2">
     <div
       :class="`w-[24%] h-28 rounded-lg flex flex-col justify-center items-center ${
         currentUserAction === 'deposit'
@@ -385,26 +404,6 @@ onMounted(async () => {
         ></path>
       </svg>
       <span>History</span>
-    </div>
-  </div>
-
-  <div class="flex justify-center items-center gap-4 my-4">
-    <div
-      class="bg-white rounded-lg text-black flex flex-col justify-center items-center gap-4 h-28 my-2 px-6"
-    >
-      <span class="text-xl">Main Balance</span>
-      <span class="font-bold tracking-widest"
-        >ETB {{ user.real_balance }} Birr</span
-      >
-    </div>
-
-    <div
-      class="bg-white rounded-lg text-black flex justify-center items-center gap-4 h-28 my-2 px-6 flex-col"
-    >
-      <span class="text-xl">Bonus Balance</span>
-      <span class="font-bold tracking-widest"
-        >ETB {{ user.bonus_balance }} Birr</span
-      >
     </div>
   </div>
 

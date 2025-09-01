@@ -28,12 +28,14 @@ const buildMatrix = (card) => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center w-[100%] gap-3 justify-center my-2">
+  <div
+    class="flex flex-col items-center w-[100%] mx-auto gap-3 justify-center my-2 px-2"
+  >
     <template v-if="Array.isArray(cards) && cards.length" class="flex flex-col">
       <div
         v-for="card in cards"
         :key="card?.id ?? Math.random()"
-        class="border rounded-lg overflow-hidden shadow text-white w-[50%] flex flex-col justify-center items-center"
+        class="border rounded overflow-hidden shadow text-white w-[55%] flex flex-col justify-center items-center"
       >
         <div class="text-center py-1 font-semibold text-white">
           Card No. {{ card?.id ?? "?" }}

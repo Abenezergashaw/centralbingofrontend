@@ -75,7 +75,7 @@ onMounted(() => {
   background: linear-gradient(
     to right,
     var(--from-gradient),
-    var(--to-gradient) 80%
+    var(--to-gradient) 100%
   );
 }
 </style>

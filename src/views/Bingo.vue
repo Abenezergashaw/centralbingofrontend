@@ -644,6 +644,7 @@ onBeforeUnmount(() => {
 
     <!-- confirm selected card  -->
     <PreviewCard
+      class="mx-auto"
       v-if="!confirmed"
       :cards="previewCards"
       @confirm="handle_card_confirm"

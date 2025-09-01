@@ -181,7 +181,7 @@ onMounted(async () => {
       <div class="hidden md:flex gap-4 text-sm items-center">
         <div v-for="item in menuItems">{{ item.label }}</div>
       </div>
-      <div class="md:hidden border" @click="gotoHome">
+      <div class="md:hidden" @click="gotoHome">
         <img src="./assets/logo.png" class="h-24 aspect-square" alt="" />
       </div>
       <div class="hidden md:flex" @click="gotoHome">

@@ -51,6 +51,7 @@ const gotoWallet = () => {
 
     <div class="flex items-center gap-4">
       <button
+        v-if="false"
         @click="toggle"
         :class="[
           'shadow-sm shadow-white w-20 h-8 flex items-center rounded-full p-1 transition-colors duration-300',

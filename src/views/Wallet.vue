@@ -86,11 +86,11 @@ const extract_messages = () => {
   let match;
   if (deposit_bank.value === "telebirr") {
     match = deposit_message.value.match(
-      /transferred ETB\s?([\d,.]+).*?transaction number is ([A-Z0-9]+)/i
+      /transferred ETB\s?([\d,.]+).*?transaction number is\s?([A-Z0-9]+)/i
     );
   } else if (deposit_bank.value === "cbe") {
     match = deposit_message.value.match(
-      /debited with ETB\s?([\d,.]+).*?id=([A-Z0-9]+)/i
+      /transfered ETB\s?([\d,.]+).*?id=([A-Z0-9]+)/i
     );
   } else if (deposit_bank.value === "boa") {
     match = deposit_message.value.match(
@@ -108,13 +108,13 @@ function isAlphanumeric(str) {
   if (!str) return false;
   return /^[A-Za-z0-9]+$/.test(str);
 }
-
 const handle_deposit = async () => {
-  // const { amount, reference } = extract_messages();
-  if (isAlphanumeric(deposit_message.value)) {
-    // if (amount && reference) {
+  const { amount, reference } = extract_messages();
+  success.value = null;
+  error.value = null;
+  if (amount && reference) {
     const transaction = {
-      txn_id: deposit_message.value,
+      txn_id: reference,
       phone: user.user,
       amount: 10,
       method: deposit_bank.value,
@@ -129,11 +129,36 @@ const handle_deposit = async () => {
     } else {
       error.value = res.message;
     }
-    // }
   } else {
-    error.value = "Invalid reference code. Please check and try again.";
+    error.value = "Text can not be read. Please check and try again.";
   }
 };
+
+// const handle_deposit = async () => {
+//   // const { amount, reference } = extract_messages();
+//   if (isAlphanumeric(deposit_message.value)) {
+//     // if (amount && reference) {
+//     const transaction = {
+//       txn_id: deposit_message.value,
+//       phone: user.user,
+//       amount: 10,
+//       method: deposit_bank.value,
+//       type: "d",
+//       status: "pending",
+//     };
+
+//     const res = await create_deposit_transaction(transaction);
+
+//     if (res.status) {
+//       success.value = res.message;
+//     } else {
+//       error.value = res.message;
+//     }
+//     // }
+//   } else {
+//     error.value = "Invalid reference code. Please check and try again.";
+//   }
+// };
 
 const handle_withdraw = async () => {
   error.value = ""; // Reset error before validation

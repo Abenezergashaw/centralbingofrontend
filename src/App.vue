@@ -169,20 +169,20 @@ onMounted(async () => {
   <div>
     <!-- Navbar -->
     <header
-      class="flex items-center justify-between px-4 text-white md:w-[98%] my-2 md:rounded-lg mx-auto"
+      class="flex h-20 items-center justify-between px-4 py-0 text-white md:w-[98%] my-2 md:rounded-lg mx-auto"
       :style="{ backgroundColor: 'var(--nav-bar2)' }"
     >
       <button @click="drawerOpen = true" class="text-[42px] md:hidden">
         ☰
       </button>
       <div class="hidden md:block" @click="gotoHome">
-        <img src="./assets/logo.png" class="h-20 w-32" alt="" />
+        <img src="./assets/logo3.png" class="h-20 w-32" alt="" />
       </div>
       <div class="hidden md:flex gap-4 text-sm items-center">
         <div v-for="item in menuItems">{{ item.label }}</div>
       </div>
       <div class="md:hidden" @click="gotoHome">
-        <img src="./assets/logo.png" class="h-24 aspect-square" alt="" />
+        <img src="./assets/logo3.png" class="w-[170px]" alt="" />
       </div>
       <div class="hidden md:flex" @click="gotoHome">
         <div class="h-20 w-32" alt=""></div>

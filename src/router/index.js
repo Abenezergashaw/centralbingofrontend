@@ -1,3 +1,4 @@
+import Admin from "@/views/Admin.vue";
 import Bingo from "@/views/Bingo.vue";
 import History from "@/views/History.vue";
 import Home from "@/views/Home.vue";
@@ -50,6 +51,11 @@ const router = createRouter({
       path: "/referrals",
       name: "referrals",
       component: Refferals,
+    },
+    {
+      path: "/admin",
+      name: "admin",
+      component: Admin,
     },
   ],
 });

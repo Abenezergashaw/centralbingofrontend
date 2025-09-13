@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, defineEmits, onMounted, computed } from "vue";
 import {
   HomeIcon,
   CurrencyDollarIcon,
@@ -13,6 +13,7 @@ import {
   UserCircleIcon,
   ChevronLeftIcon,
   CogIcon,
+  AcademicCapIcon,
 } from "@heroicons/vue/24/outline";
 import { useMenuStore } from "@/stores/menu";
 import { useUserStore } from "@/stores/user";
@@ -38,7 +39,14 @@ const menuItems = [
 const SettingItems = [
   { label: "Profile", icon: CogIcon, value: "profile" },
   { label: "Contact", icon: QuestionMarkCircleIcon, value: "contact" },
+  { label: "Admin", icon: AcademicCapIcon, value: "admin" },
 ];
+
+const visibleItems = computed(() =>
+  SettingItems.filter(
+    (item) => item.value !== "admin" || user.user === "934596919"
+  )
+);
 
 const selected = ref(null);
 onMounted(() => {});
@@ -104,7 +112,7 @@ function selectMenu() {
 
     <div class="flex flex-col gap-2 text-gray-800 px-4 py-2">
       <div
-        v-for="item in SettingItems"
+        v-for="item in visibleItems"
         :key="item.value"
         @click="
           selected = item.value;

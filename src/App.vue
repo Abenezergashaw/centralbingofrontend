@@ -68,6 +68,9 @@ const handleSelectedMenu = (d) => {
   if (d === "referrals") {
     router.push(`/referrals`);
   }
+  if (d === "admin") {
+    router.push(`/admin`);
+  }
 };
 
 const gotoHome = () => {

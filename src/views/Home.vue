@@ -67,13 +67,14 @@ onMounted(() => {
     </div>
 
     <div
-      class="w-full h-[300px] max-w-[500px] rounded-lg gradient-box flex justify-center items-center flex-col gap-6 text-2xl animate-pulse"
+      class="w-full h-[200px] max-w-[500px] rounded-lg gradient-box flex justify-center items-center flex-col gap-6 text-2xl"
       :style="{ color: 'var(--button-color)' }"
     >
       <div class="text-center">የቦነስ ጨዋታዎች በአክሱም ቢንጎ በቅርቡ ይጠብቁን!</div>
       <div class="text-center">አክሱም ቢንጎ የሁሉም ምርጫ</div>
     </div>
   </div>
+  <img src="../assets/play.jpg" class="w-full" alt="" />
 </template>
 
 <style scoped>

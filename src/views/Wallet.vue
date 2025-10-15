@@ -109,12 +109,13 @@ function isAlphanumeric(str) {
   return /^[A-Za-z0-9]+$/.test(str);
 }
 const handle_deposit = async () => {
-  const { amount, reference } = extract_messages();
+  const reference = isAlphanumeric(deposit_message.value);
   success.value = null;
   error.value = null;
-  if (amount && reference) {
+  console.log(reference, "reference", deposit_message.value);
+  if (reference) {
     const transaction = {
-      txn_id: reference,
+      txn_id: deposit_message.value,
       phone: user.user,
       amount: 10,
       method: deposit_bank.value,

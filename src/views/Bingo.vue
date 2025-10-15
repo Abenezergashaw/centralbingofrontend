@@ -32,7 +32,7 @@ menu.setSelected("game");
 
 // const socket = io("http://172.20.10.13:5000");
 // const socket = io("http://localhost:5000");
-const socket = io("https://centralbingo.duckdns.org");
+const socket = io("https://axum.gondarmenu.com");
 
 const gameStates = ref(["game-select", "card-select", "game"]);
 const gameState = ref("game-select");

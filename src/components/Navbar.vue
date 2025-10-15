@@ -44,7 +44,7 @@ const SettingItems = [
 
 const visibleItems = computed(() =>
   SettingItems.filter(
-    (item) => item.value !== "admin" || user.user === "918159201"
+    (item) => item.value !== "admin" || user.user === "940104415"
   )
 );
 

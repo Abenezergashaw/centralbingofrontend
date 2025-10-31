@@ -46,8 +46,8 @@ const accounts = {
   //   account: "168286813",
   // },
   telebirr: {
-    name: "SOLOMON TADELO",
-    account: "0918159201",
+    name: "Atsedemariam Yaregal",
+    account: "0940104415",
   },
 };
 
@@ -112,7 +112,7 @@ const handle_deposit = async () => {
   const reference = isAlphanumeric(deposit_message.value);
   success.value = null;
   error.value = null;
-  console.log(reference, "reference", deposit_message.value);
+  // console.log(reference, "reference", deposit_message.value);
   if (reference) {
     const transaction = {
       txn_id: deposit_message.value,

@@ -104,6 +104,7 @@ onMounted(async () => {
     try {
       id = await getTelegramId();
       // id = "353008986";
+      //id = "7094056144";
 
       console.log("aaa ID:", id);
 
